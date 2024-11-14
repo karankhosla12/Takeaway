@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Freebie Offer</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            text-align: center;
+            background-color: #f4f4f9;
+            color: #333;
+        }
+
+        /* Header Styling with Logo on the Left */
+        header {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+            background-color: #000; /* Black background */
+            color: white;
+        }
+
+        header img {
+            width: 70px; /* Larger logo size */
+            height: auto;
+            margin-right: 10px;
+        }
+
+        header h1 {
+            margin: 0;
+            font-size: 2em;
+        }
+
+        /* Container for form and messages */
+        .container {
+            margin-top: 50px;
+            padding: 20px;
+            background-color: #fff;
+            border-radius: 8px;
+            width: 80%;
+            max-width: 500px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        h1 {
+            font-size: 1.5em;
+            margin-bottom: 20px;
+        }
+
+        label {
+            font-size: 1.2em;
+            margin-bottom: 10px;
+            display: block;
+        }
+
+        .checkbox-container {
+            margin-top: 20px;
+        }
+
+        .checkbox-container input[type="checkbox"] {
+            margin-right: 10px;
+        }
+
+        .message {
+            margin-top: 20px;
+            font-size: 1.2em;
+            color: #f44336;
+            font-weight: bold;
+        }
+
+        /* Iframe styling */
+        iframe {
+            width: 100%;
+            height: 500px;
+            border: none;
+            margin-top: 20px;
+        }
+
+        /* Footer Social Icons */
+        .social-icons {
+            margin-top: 30px;
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+        }
+
+        .social-icons a {
+            font-size: 30px; /* Bigger icon size */
+            text-decoration: none;
+            color: #333;
+        }
+
+        .social-icons a:hover {
+            color: #007bff;
+        }
+
+        /* Responsive design for small screens */
+        @media (max-width: 600px) {
+            .social-icons {
+                flex-direction: column;
+                gap: 10px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Header with Logo on the Left -->
+    <header>
+        <img src="Icons/mp.png" alt="Logo"> <!-- Logo Image -->
+        <h1>Freebie Offer</h1>
+    </header>
+
+    <!-- Main Container -->
+    <div class="container">
+        <h1>Fill in this form to take home a freebie!</h1>
+        
+        <!-- Form Section -->
+        <div class="message" id="error-message"></div>
+        
+        <form id="freebie-form">
+            <label for="accept-checkbox">Confirm you are not a robot:</label>
+            <div class="checkbox-container">
+                <input type="checkbox" id="accept-checkbox">
+                <label for="accept-checkbox">I confirm I am not a robot</label>
+            </div>
+        </form>
+
+        <!-- Iframe for form will appear here -->
+        <div id="iframe-container"></div>
+    </div>
+
+    <!-- Social Icons Section -->
+    <div class="social-icons">
+        <a href="https://www.instagram.com/masterpiecebuffet/" target="_blank" title="Instagram">
+            <img src="iglogo.jpeg" alt="Instagram" width="50" height="50">
+        </a>
+        <a href="tel:+919948000819" target="_blank" title="Call Us">
+            <img src="Icons/phone logo.png" alt="Phone" width="50" height="50">
+        </a>
+        <a href="https://maps.app.goo.gl/SFhSyVSBXPFnw4Mu5" target="_blank" title="Find Us on Google Maps">
+            <img src="Icons/maplgo.jpeg" alt="Map" width="50" height="50">
+        </a>
+    </div>
+
+    <script>
+        // Helper function to get cookies
+        function getCookie(name) {
+            const value = `; ${document.cookie}`;
+            const parts = value.split(`; ${name}=`);
+            if (parts.length === 2) return parts.pop().split(';').shift();
+            return null;
+        }
+
+        // Helper function to set cookies
+        function setCookie(name, value, days) {
+            const d = new Date();
+            d.setTime(d.getTime() + (days * 24 * 60 * 60 * 1000));
+            let expires = "expires=" + d.toUTCString();
+            document.cookie = name + "=" + value + ";" + expires + ";path=/";
+        }
+
+        // Check if the user has already submitted the form within the last hour
+        function checkCookie() {
+            const cookieTimestamp = getCookie('freebieTimestamp');
+            const currentTime = new Date().getTime();
+
+            if (cookieTimestamp) {
+                const timeDifference = (currentTime - cookieTimestamp) / (1000 * 60 * 60); // Time difference in hours
+
+                if (timeDifference < 1) {
+                    // If the cookie is less than 1 hour old
+                    document.getElementById("error-message").textContent = "Sorry, you have already filled the form. Please check your email.";
+                    return false; // Do not allow opening the form
+                }
+            }
+
+            // If no cookie exists or the cookie is older than 1 hour
+            document.getElementById("error-message").textContent = "";
+            return true; // Allow opening the form
+        }
+
+        // Handle checkbox change event
+        document.getElementById("accept-checkbox").addEventListener("change", function() {
+            const iframeContainer = document.getElementById("iframe-container");
+            if (this.checked) {
+                // Check if the cookie is valid (not filled in the last hour)
+                if (checkCookie()) {
+                    const currentTimestamp = new Date().getTime();
+                    setCookie('freebieTimestamp', currentTimestamp, 1); // Save timestamp for 1 day
+
+                    // Open the iframe with the form
+                    iframeContainer.innerHTML = `<iframe src="https://forms.gle/wo9rj53zPYmAGBMZ7" title="Freebie Form"></iframe>`;
+                }
+            }
+        });
+
+    </script>
+
+</body>
+</html>
