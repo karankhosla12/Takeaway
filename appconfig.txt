@@ -1,0 +1,68 @@
+
+To set up the triggger from the sheet linked to the Google form go to the sheet >> create an app script 
+
+The trigger is onFormubmit() and on form submit check the config file for screenshot 
+Depbloy the app 
+
+
+
+
+
+
+
+// This function will trigger when a form response is submitted
+function onFormSubmit(e) {
+  // Get the submitted responses from the event object
+  var responses = e.values; // e.values contains all form response values
+
+  // Extract the relevant form values from the responses
+  var name = responses[1];  // Assuming Name is in column 2 (index 1)
+  var phone = responses[2]; // Assuming Phone is in column 3 (index 2)
+  var email = responses[3]; // Assuming Email is in column 4 (index 3)
+
+  // Compose the thank you message for the user
+  var userSubject = "Thank you for filling the form!";
+  var userMessage = "Thank you for filling in the form. Please drop a Google review at https://g.co/kgs/qbrshZS and follow us on Instagram - https://www.instagram.com/masterpiecebuffet/ to take home a goodie from the buffet. Once done, kindly show it to our staff who will assist you with packing a goodie.";
+
+  // Send email to the user
+  MailApp.sendEmail({
+    to: email,
+    subject: userSubject,
+    body: userMessage
+  });
+
+  // Send email to the admin (Karan)
+  var adminEmail = "karankhosla99@gmail.com";
+  var adminSubject = "New Form Submission: " + name;
+  var adminMessage = "A new form has been submitted with the following details:\n\n" +
+                     "Name: " + name + "\n" +
+                     "Phone: " + phone + "\n" +
+                     "Email: " + email;
+
+  // Send email to the admin
+  MailApp.sendEmail({
+    to: adminEmail,
+    subject: adminSubject,
+    body: adminMessage
+  });
+}
+
+// Set up the trigger to run the onFormSubmit function when a new form response is submitted
+function createOnFormSubmitTrigger() {
+  // Replace 'your-sheet-id' with the actual ID of the Google Sheet
+  var sheet = SpreadsheetApp.getActiveSpreadsheet();
+  
+  // Remove any existing triggers (if any) to avoid duplicates
+  var existingTriggers = ScriptApp.getProjectTriggers();
+  for (var i = 0; i < existingTriggers.length; i++) {
+    if (existingTriggers[i].getHandlerFunction() == "onFormSubmit") {
+      ScriptApp.deleteTrigger(existingTriggers[i]);
+    }
+  }
+
+  // Create a new trigger for form submission
+  ScriptApp.newTrigger("onFormSubmit")
+           .forSpreadsheet(sheet)
+           .onFormSubmit() // Trigger on form submit
+           .create();
+}
